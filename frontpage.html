@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Stats Tracker</title>
+    <style>
+        :root {
+            --primary-color: #1d428a;
+            --secondary-color: #c8102e;
+            --accent-color: #ffd700;
+            --light-bg: #f5f5f5;
+            --dark-text: #333;
+            --light-text: #fff;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #0d2d62);
+            color: var(--light-text);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--accent-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .filters {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        select, input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #0d2d62;
+        }
+        
+        .last-updated {
+            margin-left: auto;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .game-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .game-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .league {
+            font-weight: 600;
+        }
+        
+        .date {
+            font-size: 0.9rem;
+        }
+        
+        .teams {
+            display: flex;
+            justify-content: space-between;
+            padding: 1.5rem 1rem;
+            align-items: center;
+        }
+        
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 40%;
+        }
+        
+        .team-name {
+            font-weight: 600;
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+        
+        .score {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background-color: var(--light-bg);
+            padding: 0.5rem 1.5rem;
+            border-radius: 30px;
+        }
+        
+        .game-status {
+            text-align: center;
+            padding: 0.5rem;
+            font-weight: 600;
+            background-color: #f0f0f0;
+        }
+        
+        .live {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .finished {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .upcoming {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        .game-details {
+            padding: 1rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-title {
+            font-weight: 600;
+        }
+        
+        .view-details {
+            display: block;
+            text-align: center;
+            padding: 0.8rem;
+            background-color: var(--light-bg);
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .view-details:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: var(--secondary-color);
+            background-color: #ffebee;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        
+        footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                gap: 1rem;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .last-updated {
+                margin-left: 0;
+                text-align: center;
+            }
+            
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🏀</span>
+                <h1>Basketball Stats Tracker</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#">Games</a></li>
+                    <li><a href="#">Teams</a></li>
+                    <li><a href="#">Players</a></li>
+                    <li><a href="#">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="filters">
+            <div class="filter-group">
+                <label for="league">League</label>
+                <select id="league">
+                    <option value="all">All Leagues</option>
+                    <option value="nba">NBA</option>
+                    <option value="euroleague">EuroLeague</option>
+                    <option value="acb">ACB (Spain)</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="status">Status</label>
+                <select id="status">
+                    <option value="all">All Games</option>
+                    <option value="live">Live</option>
+                    <option value="finished">Finished</option>
+                    <option value="upcoming">Upcoming</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label for="date">Date</label>
+                <input type="date" id="date">
+            </div>
+            
+            <button id="apply-filters">Apply Filters</button>
+            
+            <div class="last-updated">
+                Last updated: <span id="update-time">Loading...</span>
+            </div>
+        </div>
+        
+        <div id="games-container">
+            <div class="loading">Loading games data...</div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Basketball Stats Tracker &copy; 2023 | Data sourced from various providers</p>
+    </footer>
+
+    <script>
+        // Sample data - in a real implementation, this would come from an API
+        const sampleGames = [
+            {
+                id: 1,
+                league: "NBA",
+                date: "2023-11-15T00:00:00",
+                team1: {
+                    name: "Los Angeles Lakers",
+                    logo: "lakers",
+                    score: 108
+                },
+                team2: {
+                    name: "Golden State Warriors",
+                    logo: "warriors",
+                    score: 104
+                },
+                status: "finished",
+                details: {
+                    topScorer: "LeBron James (32 pts)",
+                    topRebounder: "Anthony Davis (14 reb)",
+                    topAssists: "Stephen Curry (11 ast)"
+                }
+            },
+            {
+                id: 2,
+                league: "NBA",
+                date: "2023-11-15T00:00:00",
+                team1: {
+                    name: "Boston Celtics",
+                    logo: "celtics",
+                    score: 112
+                },
+                team2: {
+                    name: "Philadelphia 76ers",
+                    logo: "76ers",
+                    score: 110
+                },
+                status: "finished",
+                details: {
+                    topScorer: "Jayson Tatum (29 pts)",
+                    topRebounder: "Joel Embiid (12 reb)",
+                    topAssists: "James Harden (10 ast)"
+                }
+            },
+            {
+                id: 3,
+                league: "EuroLeague",
+                date: "2023-11-16T18:00:00",
+                team1: {
+                    name: "Real Madrid",
+                    logo: "real-madrid",
+                    score: 0
+                },
+                team2: {
+                    name: "CSKA Moscow",
+                    logo: "cska",
+                    score: 0
+                },
+                status: "upcoming",
+                details: {
+                    venue: "WiZink Center, Madrid",
+                    broadcast: "EuroLeague TV"
+                }
+            },
+            {
+                id: 4,
+                league: "NBA",
+                date: "2023-11-15T00:00:00",
+                team1: {
+                    name: "Chicago Bulls",
+                    logo: "bulls",
+                    score: 97
+                },
+                team2: {
+                    name: "Milwaukee Bucks",
+                    logo: "bucks",
+                    score: 105
+                },
+                status: "finished",
+                details: {
+                    topScorer: "Giannis Antetokounmpo (35 pts)",
+                    topRebounder: "Giannis Antetokounmpo (12 reb)",
+                    topAssists: "Jrue Holiday (9 ast)"
+                }
+            }
+        ];
+
+        // Function to format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Function to format time
+        function formatTime(dateString) {
+            const options = { hour: '2-digit', minute: '2-digit' };
+            return new Date(dateString).toLocaleTimeString(undefined, options);
+        }
+
+        // Function to render games
+        function renderGames(games) {
+            const container = document.getElementById('games-container');
+            
+            if (games.length === 0) {
+                container.innerHTML = '<div class="error">No games found matching your criteria.</div>';
+                return;
+            }
+            
+            let html = '<div class="games-grid">';
+            
+            games.forEach(game => {
+                const statusClass = game.status === 'live' ? 'live' : 
+                                  game.status === 'finished' ? 'finished' : 'upcoming';
+                const statusText = game.status === 'live' ? 'LIVE' : 
+                                  game.status === 'finished' ? 'FINISHED' : 'UPCOMING';
+                
+                html += `
+                    <div class="game-card">
+                        <div class="game-header">
+                            <span class="league">${game.league}</span>
+                            <span class="date">${formatDate(game.date)}</span>
+                        </div>
+                        
+                        <div class="teams">
+                            <div class="team">
+                                <div class="team-logo">🏀</div>
+                                <div class="team-name">${game.team1.name}</div>
+                            </div>
+                            
+                            <div class="score">${game.team1.score} - ${game.team2.score}</div>
+                            
+                            <div class="team">
+                                <div class="team-logo">🏀</div>
+                                <div class="team-name">${game.team2.name}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="game-status ${statusClass}">
+                            ${statusText}${game.status === 'live' ? ' • Q3 07:32' : ''}
+                        </div>
+                        
+                        <div class="game-details">
+                            ${game.status !== 'upcoming' ? `
+                                <div class="detail-row">
+                                    <span class="detail-title">Top Scorer:</span>
+                                    <span>${game.details.topScorer}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-title">Top Rebounder:</span>
+                                    <span>${game.details.topRebounder}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-title">Top Assists:</span>
+                                    <span>${game.details.topAssists}</span>
+                                </div>
+                            ` : `
+                                <div class="detail-row">
+                                    <span class="detail-title">Venue:</span>
+                                    <span>${game.details.venue}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-title">Broadcast:</span>
+                                    <span>${game.details.broadcast}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-title">Time:</span>
+                                    <span>${formatTime(game.date)}</span>
+                                </div>
+                            `}
+                        </div>
+                        
+                        <a href="#" class="view-details">View Full Details & Stats</a>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Function to filter games based on selected criteria
+        function filterGames() {
+            const leagueFilter = document.getElementById('league').value;
+            const statusFilter = document.getElementById('status').value;
+            const dateFilter = document.getElementById('date').value;
+            
+            let filteredGames = sampleGames;
+            
+            if (leagueFilter !== 'all') {
+                filteredGames = filteredGames.filter(game => 
+                    game.league.toLowerCase() === leagueFilter.toLowerCase());
+            }
+            
+            if (statusFilter !== 'all') {
+                filteredGames = filteredGames.filter(game => game.status === statusFilter);
+            }
+            
+            if (dateFilter) {
+                filteredGames = filteredGames.filter(game => {
+                    const gameDate = new Date(game.date).toDateString();
+                    const filterDate = new Date(dateFilter).toDateString();
+                    return gameDate === filterDate;
+                });
+            }
+            
+            renderGames(filteredGames);
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date as default in date filter
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+            
+            // Set last updated time
+            document.getElementById('update-time').textContent = new Date().toLocaleString();
+            
+            // Render initial games
+            renderGames(sampleGames);
+            
+            // Add event listener to filter button
+            document.getElementById('apply-filters').addEventListener('click', filterGames);
+        });
+    </script>
+</body>
+</html>
